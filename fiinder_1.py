@@ -7,8 +7,6 @@ import mmap
 from threading import  Thread
 from datetime import datetime
 
-#jake
-
 extension_List = [".txt", ".ppt", ".doc",".xls", ".csv"]
 #xtension_List = [".txt", ".doc"]
 #filesList = [] # this is the domain of the search function.
