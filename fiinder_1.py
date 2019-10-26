@@ -7,20 +7,13 @@ import mmap
 from threading import  Thread
 from datetime import datetime
 
+keyword = "trademark"
 extension_List = [".txt", ".ppt", ".doc",".xls", ".csv"]
 #xtension_List = [".txt", ".doc"]
 #filesList = [] # this is the domain of the search function.
 searchList = []
 
 t1 = datetime.now()
-# def searchFile(fileName, keyword):
-# 	openfile = open(fileName, encoding ='utf-8')
-# 	line = openfile.readlines()
-# 	for line in openfile:
-#
-# 				if keyword in part:
-# 					print(fileName)
-# 				line = openFile.readline()
 
 def get_drives():
 	response = os.popen("wmic logicaldisk get caption")
@@ -45,20 +38,12 @@ def get_drives():
 drivesList = get_drives()
 print(drivesList)
 
-
-#for drive in drivesList:
-
-#	listOfFiles = os.listdir() # each Drive will have the main folders in it is directory.
-	#for x in listOfFiles:
-	#	print(drive)
-	#	print(x)
-
 def searchFile(filename, dirname):
 	for extension in extension_List:
 		if filename.lower().endswith(extension):
 			cwd = os.getcwd()
 			fullPath = os.path.join(dirname,filename)
-			if os.path.isfile(fullPath):
+			if os.path.isfile(fullPath) and searchFileContents(fullPath, keyword):
 				print(fullPath)
 				return fullPath
 	return -1
@@ -71,7 +56,6 @@ def threadedWalk(directory):
 					result = searchFile(filename, dirname)
 					if (result != -1):
 						searchList.append(result)
-
 
 os.chdir('/')
 def spider(drivesList):
@@ -90,24 +74,35 @@ cwdList = []
 fileNameList = []
 
 
-spider(drivesList)
 
 
-keyword ="trademark"
+
+
 
 file1 = r"C:\Users\grena_000\Documents\test.txt"
 
-def searchFile1(sourceFile, keyword):
-	a = sourceFile.replace(r'\t', r'\\t').replace(r'\a', r'\\a')
-	f = open(a, 'r')
-	contents = f.read()
-	if (contents.find(keyword) >= 0):
-		print(sourceFile)
-	else:
-		print('not found!')
+def searchFileContents(sourceFile, keyword):
+	try:
+		a = sourceFile.replace(r'\t', r'\\t').replace(r'\a', r'\\a')
+		f = open(a, 'r')
+		contents = f.read()
+		if (contents.find(keyword) >= 0):
+			print('FOUND: ', sourceFile)
+			return True
+		else:
+			return False
+	except:
+		return False
+
+def startSearch(key):
+	keyword = key
+	spider(drivesList)
 
 
-#searchFile1(file1, keyword)
+startSearch(keyword)
+
+
+
 t2 = datetime.now()
 
 totalTime = t2-t1
