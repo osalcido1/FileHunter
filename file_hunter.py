@@ -2,6 +2,13 @@ import os
 from os import walk
 import pickle
 
+# The first run will take about 57 seconds
+# Since the program will build the pkl files
+# which contains all the files from disired root_path
+# After that, as long as the root is not changed
+# the search process will only take about 15 seconds
+# no matter which type of search
+
 
 class FileHunter:
     def __init__(self):
