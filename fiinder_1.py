@@ -33,7 +33,13 @@ def get_drives():
 		line = line.strip(" ")
 		if (line == "Caption" or line == ""):
 			continue
-		list1.append(line)
+		if (line == 'C:'):
+			print('LINE', line)
+			for (dirname) in os.listdir(line + '\\'):
+				if (dirname != 'Windows'):
+					list1.append('C:\\' + dirname)
+		else:
+			list1.append(line)
 	return list1
 
 drivesList = get_drives()
@@ -46,72 +52,62 @@ print(drivesList)
 	#for x in listOfFiles:
 	#	print(drive)
 	#	print(x)
+
+def searchFile(filename, dirname):
+	for extension in extension_List:
+		if filename.lower().endswith(extension):
+			cwd = os.getcwd()
+			fullPath = os.path.join(dirname,filename)
+			if os.path.isfile(fullPath):
+				print(fullPath)
+				return fullPath
+	return -1
+
+def threadedWalk(directory):
+	print('THREADED WALK')
+	if (os.path.isdir(directory)):
+		for (dirname,dirs,files) in os.walk(directory):
+				for filename in files:
+					result = searchFile(filename, dirname)
+					if (result != -1):
+						searchList.append(result)
+
+
 os.chdir('/')
 def spider(drivesList):
-
-	counter = 0
+	print('THREADING')
 	for drive in drivesList:
-		for (dirname,dirs,files) in os.walk(drive):
-			for filename in files:
-				for extension in extension_List:
-					if filename.lower().endswith(extension):
-						cwd = os.getcwd()
-						fullPath  = os.path.join(dirname,filename)
-						if os.path.isfile(fullPath):
-							print(fullPath)
-							searchList.append(fullPath)
+		if drive.startswith('C:\\$'):
+			continue
+		if (os.path.isdir(drive)):
+			print('DRIVE', drive)
+			thread = Thread(target=threadedWalk, args=(drive,))
+			thread.start()
+
 
 #### ver_01 : storing cwd and filename separately ####
 cwdList = []
 fileNameList = []
 
-# def spider(drivesList):
-#
-# 	counter = 0
-# 	for drive in drivesList:
-# 		for (dirname,dirs,files) in os.walk(drive):
-# 			for filename in files:
-# 				for extension in extension_List:
-# 					if filename.lower().endswith(extension):
-# 						#if os.path.isfile(filename):
-# 							#cwd = os.getcwd()
-# 							#cwdList.append(cwd)
-# 							#fileNameList.append(filename)
-# 							print(cwd)
+
+spider(drivesList)
 
 
-#spider(drivesList)
-keyword ="trademarks"
+keyword ="trademark"
 
-file1 = 'C:Program Files\MATLAB\R2019a\trademarks.txt'
-
+file1 = r"C:\Users\grena_000\Documents\test.txt"
 
 def searchFile1(sourceFile, keyword):
-
-	a = sourceFile.replace('\t', '\\t').replace('\a', '\\a')
-	#print(a)
+	a = sourceFile.replace(r'\t', r'\\t').replace(r'\a', r'\\a')
 	f = open(a, 'r')
 	contents = f.read()
-	if (contents.find(keyword) >0):
+	if (contents.find(keyword) >= 0):
 		print(sourceFile)
+	else:
+		print('not found!')
 
-	# cwdSize = len(cwdList)
-	# fileNameListSize = len(fileNameList)
-	# if cwdSize != fileNameList:
-	# 	print("ERROR: cwdSize and fileNameSize are not the same")
-	# 	exit(1)
-	# else :
-	# 	index = 0;
-	# 	while (index < cwdSize):
-	# 		cwd = os.chdir(cwdList[indx])
-	# 		sourceFile = fileNameList[index]
-	# 		inFile = open(sourceFile,'r')
-	# 		line = inFile.readlines()
-	# 		for line in inFile:
-	# 			if keyword in line:
-	# 				print(inFile)
-	# 			line = inFile.readlines()
-searchFile1(file1, keyword)
+
+#searchFile1(file1, keyword)
 t2 = datetime.now()
 
 totalTime = t2-t1
