@@ -9,8 +9,6 @@ from datetime import datetime
 
 keyword = "trademark"
 extension_List = [".txt", ".ppt", ".doc",".xls", ".csv"]
-#xtension_List = [".txt", ".doc"]
-#filesList = [] # this is the domain of the search function.
 searchList = []
 
 t1 = datetime.now()
@@ -27,9 +25,12 @@ def get_drives():
 		if (line == "Caption" or line == ""):
 			continue
 		if (line == 'C:'):
-			print('LINE', line)
+			#print('LINE', line)
 			for (dirname) in os.listdir(line + '\\'):
-				if (dirname != 'Windows'):
+				if (dirname != 'Windows' and 
+					dirname != 'Program Files (x86)' and 
+					dirname != 'Program Files' and not 
+					dirname.startswith('C:\\$')):
 					list1.append('C:\\' + dirname)
 		else:
 			list1.append(line)
@@ -43,43 +44,10 @@ def searchFile(filename, dirname):
 		if filename.lower().endswith(extension):
 			cwd = os.getcwd()
 			fullPath = os.path.join(dirname,filename)
-			if os.path.isfile(fullPath) and searchFileContents(fullPath, keyword):
-				print(fullPath)
+			if os.path.isfile(fullPath): #and searchFileContents(fullPath, keyword):
+				#print(fullPath)
 				return fullPath
 	return -1
-
-def threadedWalk(directory):
-	print('THREADED WALK')
-	if (os.path.isdir(directory)):
-		for (dirname,dirs,files) in os.walk(directory):
-				for filename in files:
-					result = searchFile(filename, dirname)
-					if (result != -1):
-						searchList.append(result)
-
-os.chdir('/')
-def spider(drivesList):
-	print('THREADING')
-	for drive in drivesList:
-		if drive.startswith('C:\\$'):
-			continue
-		if (os.path.isdir(drive)):
-			print('DRIVE', drive)
-			thread = Thread(target=threadedWalk, args=(drive,))
-			thread.start()
-
-
-#### ver_01 : storing cwd and filename separately ####
-cwdList = []
-fileNameList = []
-
-
-
-
-
-
-
-file1 = r"C:\Users\grena_000\Documents\test.txt"
 
 def searchFileContents(sourceFile, keyword):
 	try:
@@ -94,23 +62,39 @@ def searchFileContents(sourceFile, keyword):
 	except:
 		return False
 
-def startSearch(key):
-	keyword = key
+def threadedWalk(directory):
+	#print('THREADED WALK')
+	global searchList
+	if (os.path.isdir(directory)):
+		for (dirname,dirs,files) in os.walk(directory):
+				for filename in files:
+					result = searchFile(filename, dirname)
+					if (result != -1):
+						searchList.append(result)
+
+os.chdir('/')
+def spider(drivesList):
+	#print('THREADING')
+	for drive in drivesList:
+		# if drive.startswith('C:\\$'):
+		# 	continue
+		if (os.path.isdir(drive)):
+			print('DRIVE', drive)
+			thread = Thread(target=threadedWalk, args=(drive,))
+			thread.start()
+
+#file1 = r"C:\Users\grena_000\Documents\test.txt"
+
+def startSearch():
 	spider(drivesList)
 
-
-startSearch(keyword)
-
-
+def search(keyword):
+	localList = []
+	for file in searchList:
+		if searchFileContents(file, keyword):
+			localList.append(file)
+	return localList
 
 t2 = datetime.now()
-
 totalTime = t2-t1
-print(totalTime)
-
-
-					#print((str1+'/'+dirpath+'/'+dirname+'/'+name))
-
-
-
-
+print('Total Time', totalTime)
