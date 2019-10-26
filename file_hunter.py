@@ -1,4 +1,5 @@
 import os
+from os import walk
 import pickle
 
 
@@ -15,7 +16,7 @@ class FileHunter:
 
     def create_new_index(self, root_path):
         """creat a new index and save to file"""
-        self.file_index = [(root, files) for root, dirs, files in .walk(root_path) if files]
+        self.file_index = [(root, files) for root, dirs, files in walk(root_path) if files]
 
         # save to file
         with open('file_index.pkl', 'wb') as f:
@@ -29,7 +30,7 @@ class FileHunter:
         except:
             self.file_index = []
 
-    def search(self, term, search_type = 'contains'):
+    def search(self, term, search_type = 'endswith'):
         """search for term based on the search type"""
         # reset variables
         self.results.clear()
@@ -58,7 +59,7 @@ class FileHunter:
 def test1():
     s = FileHunter()
     s.create_new_index('C:/')
-    s.search('program')
+    s.search('.txt')
 
     print()
     print(">> There were {:,d} matches out of {:,d} records searched.".format(s.matches, s.records))
