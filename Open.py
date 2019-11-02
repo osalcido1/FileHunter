@@ -31,7 +31,6 @@ def open_file(filename, target):
 
 
        doc.save(filename)
-       os.startfile(filename)
     if '.pptx' in filename:
        prs = Presentation (filename)
        text_runs= []
@@ -43,15 +42,35 @@ def open_file(filename, target):
                for paragraph in text_frame.paragraphs:
                    for run in paragraph.runs:
                        if target in run.text:
-
+                           if run.text == target:
+                               run.font.fill.solid()
+                               d = RGBColor(0xff, 0xff, 0x00)
+                               run.font.fill.fore_color.rgb = d
+                               continue
                            x = run.text.split(target);
-                           run.text = x[0] + target + x[1]
-                           run.font.fill.solid
+                           run.text = x[0]
+                           temp = paragraph.add_run()
+                           temp.text = target
+                           temp.font.bold = run.font.bold
+                           temp.font.italic = run.font.italic
+                           temp.font.language_id = run.font.language_id
+                           temp.font.name = run.font.name
+                           temp.font.size = run.font.size
+                           temp.font.underline =temp.font.underline
+                           temp.font.fill.solid()
                            d = RGBColor(0xff, 0xff, 0x00)
-                           run.font.fill.fore_color.rgb = d
+                           temp.font.fill.fore_color.rgb = d
+                           temp2 = paragraph.add_run()
+                           temp2.font.bold = run.font.bold
+                           temp2.font.color.rgb = run.font.color.rgb
+                           temp2.font.italic = run.font.italic
+                           temp2.font.language_id = run.font.language_id
+                           temp2.font.name = run.font.name
+                           temp2.font.size = run.font.size
+                           temp2.font.underline = temp.font.underline
+                           temp2.text = x[1]
 
        prs.save(filename)
-       #os.startfile(filename)
     if '.xlsx' in filename:
         wb = load_workbook(filename)
         yellowFill = PatternFill(start_color='FFFFFF00', end_color='FFFFFF00', fill_type='solid')
