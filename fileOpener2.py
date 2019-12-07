@@ -72,6 +72,7 @@ def open_file(filename, target):
                            d = RGBColor(0xff, 0xff, 0x00)
                            temp.font.fill.fore_color.rgb = d
                            temp2 = paragraph.add_run()
+                           temp2.font.bold = run.font.bold
                            temp2.font.italic = run.font.italic
                            temp2.font.language_id = run.font.language_id
                            temp2.font.name = run.font.name
